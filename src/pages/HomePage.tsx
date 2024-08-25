@@ -22,9 +22,10 @@ import {
 } from '@/redux/questionSlice';
 import { RootState } from '@/redux/store';
 import { useNavigate } from 'react-router-dom';
+import { Loader } from 'lucide-react';
 
 const HomePage = () => {
-  const [questionCategory, setQuestionCategory] = useState('');
+  const [questionCategory, setQuestionCategory] = useState<number | string>('');
   const [questionOptions, setQuestionOptions] = useState<IOption[] | null>(null);
   const [questionDifficulty, setQuestionDifficulty] = useState('');
   const [questionType, setQuestionType] = useState('');
@@ -62,7 +63,7 @@ const HomePage = () => {
         apiUrl = apiUrl.concat(`amount=${questionCount}`);
       }
 
-      if (questionCategory.length) {
+      if (questionCategory) {
         apiUrl = apiUrl.concat(`&category=${questionCategory}`);
       }
 
@@ -92,25 +93,37 @@ const HomePage = () => {
   const { questions } = useSelector((state: RootState) => state.question);
   console.log(questions);
   console.log(options);
+  console.log(questionDifficulty);
+  console.log(questionType);
+  console.log(questionCategory);
 
   return (
-    <main className='flex flex-col items-center bg-purple-500 min-h-screen container '>
-      <h2 className='mt-3 text-3xl md:text-5xl font-medium'>Quiz App</h2>
+    <main className='flex flex-col items-center min-h-screen container bg-gradient-to-r from-violet-500 to-fuchsia-600'>
+      <h2 className='mt-3 text-3xl md:text-5xl font-medium text-slate-700 mb-3'>Quiz App</h2>
 
       {/* category field */}
       <Label htmlFor='category' className='m-3'>
         Category :
       </Label>
-      <select value={questionCategory} onChange={(e) => setQuestionCategory(e.target.value)}>
-        <option>All</option>
-        {questionOptions &&
-          questionOptions.length > 0 &&
-          questionOptions.map((option: IOption) => (
-            <option value={option.id} key={option.id}>
-              {option.name}
-            </option>
-          ))}
-      </select>
+      <Select
+        defaultValue={questionCategory}
+        onValueChange={(value) => setQuestionCategory(Number(value))}
+        name='difficulty'
+      >
+        <SelectTrigger className='w-3/4 md:w-1/2'>
+          <SelectValue placeholder='All' />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value=' '>All </SelectItem>
+          {questionOptions &&
+            questionOptions.length > 0 &&
+            questionOptions.map((option: IOption) => (
+              <SelectItem value={String(option.id)} key={option.id}>
+                {option.name}
+              </SelectItem>
+            ))}
+        </SelectContent>
+      </Select>
 
       {/* Difficulty field */}
       <Label htmlFor='difficulty' className='m-3'>
@@ -120,10 +133,10 @@ const HomePage = () => {
       <Select
         onValueChange={(value) => setQuestionDifficulty(value)}
         name='difficulty'
-        value={questionDifficulty}
+        defaultValue={questionDifficulty}
       >
         <SelectTrigger className='w-3/4 md:w-1/2'>
-          <SelectValue aria-label={questionDifficulty}>{questionDifficulty}</SelectValue>
+          <SelectValue placeholder='Any Difficulty' />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value=' '>Any Difficulty </SelectItem>
@@ -138,9 +151,13 @@ const HomePage = () => {
         Question Type :
       </Label>
 
-      <Select onValueChange={(value) => setQuestionType(value)} name='type' value={questionType}>
+      <Select
+        onValueChange={(value) => setQuestionType(value)}
+        name='type'
+        defaultValue={questionType}
+      >
         <SelectTrigger className='w-3/4 md:w-1/2'>
-          <SelectValue aria-label={questionType}>{questionType}</SelectValue>
+          <SelectValue placeholder='Any Type' />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value=' '>Any Type</SelectItem>
@@ -167,7 +184,7 @@ const HomePage = () => {
       />
 
       <Button className='m-5 w-2/5 md:w-2/5' onClick={handleSubmit}>
-        Take Quiz
+        {isLoading ? <Loader className='animate-spin' /> : 'Take Quiz'}
       </Button>
     </main>
   );

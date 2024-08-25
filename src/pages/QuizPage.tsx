@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/card';
 import { setIndex, setScore } from '@/redux/questionSlice';
 import { useNavigate } from 'react-router-dom';
+import { Clock, Loader2 } from 'lucide-react';
 
 const QuizPage = () => {
   const dispatch = useDispatch();
@@ -21,12 +22,11 @@ const QuizPage = () => {
 
   const { questions, score, index } = useSelector((state: RootState) => state.question);
 
-  console.log(score, index);
-
   const [options, setOptions] = useState<string[]>([]);
   const [answerSelected, setAnswerSelected] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [timeLeft, setTimeLeft] = useState<number>(12);
 
   useEffect(() => {
     // Check if the index is out of bounds
@@ -45,17 +45,33 @@ const QuizPage = () => {
       );
       setOptions(answers);
     }
+
+    const interval = setInterval(() => {
+      setTimeLeft((prevTimer) => {
+        if (prevTimer > 0) {
+          return prevTimer - 1;
+        } else {
+          dispatch(setIndex(index + 1));
+          // Reset timer for the next question
+          setTimeLeft(12);
+          return 12;
+        }
+      });
+    }, 1000);
+    // Cleanup timer on component unmount or when question changes
+    return () => clearInterval(interval);
   }, [index, questions, navigate]);
 
   const handleListItemClick = (event: React.MouseEvent<HTMLLIElement>) => {
     setAnswerSelected(true);
     const selectedText = event.currentTarget.textContent;
+    const question: IQuestion = questions[index];
 
     if (selectedText) {
       setSelectedAnswer(selectedText);
 
       // Set score if the answer is correct
-      if (selectedText === questions[index]?.correct_answer) {
+      if (selectedText === question?.correct_answer) {
         setIsCorrect(true);
         dispatch(setScore(score + 1));
       } else {
@@ -68,6 +84,7 @@ const QuizPage = () => {
           setAnswerSelected(false);
           setSelectedAnswer(null);
           dispatch(setIndex(index + 1));
+          setTimeLeft(12);
         }, 2000);
       } else {
         setTimeout(() => {
@@ -85,20 +102,28 @@ const QuizPage = () => {
 
   const question: IQuestion = questions[index]; // Get the question after all checks
 
-  console.log(question.correct_answer);
-
   return (
     <main className='flex flex-col items-center justify-center bg-purple-500 min-h-screen container p-2'>
       {!questions.length ? (
-        <h3>Please Wait.....</h3>
+        <h3 className='text-xl flex flex-col'>
+          Please Wait.....
+          <>
+            <Loader2 className='animate-spin' />
+          </>
+        </h3>
       ) : (
         <>
           <Card className='p-2 w-full max-w-xl md:max-w-lg'>
             <CardHeader>
               <CardDescription className='text-center'>Question {index + 1}</CardDescription>
-              <CardTitle className='text-slate-700 text-base md:text-2xl'>
+
+              <CardTitle className='text-slate-700 text-base md:text-2xl text-center'>
                 {decodeString(question.question)}
               </CardTitle>
+
+              <CardDescription className='text-red-600 text-sm font-semibold flex'>
+                <Clock className='me-2' /> Left : {timeLeft} seconds
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <ul>

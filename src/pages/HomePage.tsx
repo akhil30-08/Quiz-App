@@ -95,7 +95,7 @@ const HomePage = () => {
       </Label>
       <Select
         defaultValue={questionCategory}
-        onValueChange={(value) => setQuestionCategory(Number(value))}
+        onValueChange={(value) => setQuestionCategory(value)}
         name='difficulty'
       >
         <SelectTrigger className='w-3/4 md:w-1/2'>
@@ -106,7 +106,7 @@ const HomePage = () => {
           {questionOptions &&
             questionOptions.length > 0 &&
             questionOptions.map((option: IOption) => (
-              <SelectItem value={String(option.id)} key={option.id}>
+              <SelectItem value={option.id} key={option.id}>
                 {option.name}
               </SelectItem>
             ))}

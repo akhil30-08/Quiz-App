@@ -151,7 +151,7 @@ const QuizPage = () => {
                 })}
               </ul>
             </CardContent>
-            <CardFooter className='flex justify-center'>
+            <CardFooter className='flex justify-center max-sm:text-sm'>
               Score: {score} / {questions.length}
             </CardFooter>
           </Card>

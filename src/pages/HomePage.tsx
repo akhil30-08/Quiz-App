@@ -24,7 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { Loader } from 'lucide-react';
 
 const HomePage = () => {
-  const [questionCategory, setQuestionCategory] = useState<number | string>('');
+  const [questionCategory, setQuestionCategory] = useState<string>('');
   const [questionOptions, setQuestionOptions] = useState<IOption[] | null>(null);
   const [questionDifficulty, setQuestionDifficulty] = useState('');
   const [questionType, setQuestionType] = useState('');
@@ -106,7 +106,7 @@ const HomePage = () => {
           {questionOptions &&
             questionOptions.length > 0 &&
             questionOptions.map((option: IOption) => (
-              <SelectItem value={option.id} key={option.id}>
+              <SelectItem value={option.id.toString()} key={option.id}>
                 {option.name}
               </SelectItem>
             ))}

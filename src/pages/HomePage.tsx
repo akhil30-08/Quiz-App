@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { IOption } from '@/types';
 import { Input } from '@/components/ui/input';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   changeAmountOfuQues,
   changeCategory,
@@ -20,7 +20,6 @@ import {
   changeType,
   setQuestions,
 } from '@/redux/questionSlice';
-import { RootState } from '@/redux/store';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from 'lucide-react';
 
@@ -34,12 +33,10 @@ const HomePage = () => {
 
   const dispatch = useDispatch();
 
-  console.log(questionCategory);
-  console.log(questionCount);
-
   const navigate = useNavigate();
 
   useEffect(() => {
+    // fetch categories on Initial render so user can select categories
     const fetchAPI = async () => {
       const response = await axios.get(String(import.meta.env.VITE_APIMAINURI));
 
@@ -87,15 +84,6 @@ const HomePage = () => {
       setIsLoading(false);
     }
   };
-
-  const { options } = useSelector((state: RootState) => state.question);
-
-  const { questions } = useSelector((state: RootState) => state.question);
-  console.log(questions);
-  console.log(options);
-  console.log(questionDifficulty);
-  console.log(questionType);
-  console.log(questionCategory);
 
   return (
     <main className='flex flex-col items-center min-h-screen container bg-gradient-to-r from-violet-500 to-fuchsia-600'>
@@ -183,7 +171,7 @@ const HomePage = () => {
         max={50}
       />
 
-      <Button className='m-5 w-2/5 md:w-2/5' onClick={handleSubmit}>
+      <Button className='m-5 w-2/5 md:w-2/5' onClick={handleSubmit} disabled={questionCount < 5}>
         {isLoading ? <Loader className='animate-spin' /> : 'Take Quiz'}
       </Button>
     </main>

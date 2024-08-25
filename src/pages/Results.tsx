@@ -69,8 +69,8 @@ const Results = () => {
   };
 
   return (
-    <main className='flex flex-col items-center justify-center bg-purple-500 min-h-screen container p-2'>
-      <Card>
+    <main className='flex flex-col items-center justify-center min-h-screen container p-2 bg-gradient-to-r from-sky-500 to-indigo-500'>
+      <Card className='bg-slate-100'>
         <CardHeader>
           <CardTitle>Your Final Score : {score}</CardTitle>
         </CardHeader>

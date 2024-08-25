@@ -60,7 +60,7 @@ const QuizPage = () => {
     }, 1000);
     // Cleanup timer on component unmount or when question changes
     return () => clearInterval(interval);
-  }, [index, questions, navigate]);
+  }, [index, questions, navigate, dispatch]);
 
   const handleListItemClick = (event: React.MouseEvent<HTMLLIElement>) => {
     setAnswerSelected(true);
